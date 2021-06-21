@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html>
-	<head>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 		<style>
 		h1, p{
-			color: #FFFFFF;
+			color: #000000;
 			text-align: center;
 			font-size: 30px;
 		}
 		</style>
 	</head>
-	<body class=keydetect>
-		<h1 id=displayheader></h1>
-		<div id=keycontainer></div>
+	<body class="keydetect">
+		<h1 id="displayheader"></h1>
+		<div id="keycontainer"></div>
 		<script>
 		    let displayheader = document.getElementById("displayheader")
 		    let keycontainer = document.getElementById("keycontainer")
@@ -26,7 +26,34 @@
                 ["7", "55"],
                 ["8", "56"],
                 ["9", "57"],
-            	["0", "48"]
+            	["0", "48"],
+            	
+				["A", "65"],
+            	["B", "66"],
+            	["C", "67"],
+            	["D", "68"],
+            	["E", "69"],
+            	["F", "70"],
+            	["G", "71"],
+            	["H", "72"],
+            	["I", "73"],
+            	["J", "74"],
+            	["K", "75"],
+            	["L", "76"],
+            	["M", "77"],
+            	["N", "78"],
+            	["O", "79"],
+            	["P", "80"],
+            	["Q", "81"],
+            	["R", "82"],
+            	["S", "83"],
+            	["T", "84"],
+            	["U", "85"],
+            	["V", "86"],
+            	["W", "87"],
+            	["X", "88"],
+            	["Y", "89"],
+            	["Z", "90"],
             ]
 		    
 		    for(i=0; i < keylist.length; i++){
@@ -35,7 +62,8 @@
 		    
 		    keydetect[0].addEventListener("keydown", event => {
 			//displayheader.innerHTML = '"' + event.key + '"'
-                let key = document.getElementById(event.keyCode)
+                console.log(event)
+				let key = document.getElementById(event.keyCode)
                 if(key != null){
                 	if(key.id == event.keyCode){
                     	key.remove()
@@ -43,5 +71,6 @@
                 }
 		    })
         	</script>
-	</body>
-</html>
+	
+
+</body></html>
