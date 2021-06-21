@@ -4,6 +4,8 @@
 		<style>
 		h1{
 			color: #FFFFFF;
+			text-align: center;
+			font-size: 30px;
 		}
 		</style>
 	</head>
@@ -13,7 +15,7 @@
             let displayheader = document.getElementById("displayheader")
             let keydetect = document.getElementsByClassName("keydetect")
             keydetect[0].addEventListener("keydown", event => {
-                displayheader.innerHTML = event.key
+                displayheader.innerHTML = '"' + event.key + '"'
             })
         </script>
     </body>
