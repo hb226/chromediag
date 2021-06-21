@@ -6,6 +6,7 @@
 	<body>
 		<div id=header>
 			<button onclick="previous()" id=previous>Previous</button>
+			<h2 id=label></h2>
 		    	<button onclick="next()" id=next>Next</button>
 		</div>
 		<object id=pagecontainer></object>
@@ -43,19 +44,22 @@
 		</style>
 		<script>
 			let pages = [
-				"touchscreen.html"
+				["touchscreen.html", "Touch Screen"]
 			]
 			let container = document.getElementById("pagecontainer")
+			let label = document.getElementById("label")
 			let currentpage = 0
-			container.setAttribute("data", pages[currentpage])
+			container.setAttribute("data", pages[currentpage][0])
+			label.setInnerHTML(pages[currentpage][1])
 			function previous(){
 				if(currentpage == 0){
 					currentpage = pages.length - 1
 				} else {
 					currentpage --
 				}
-				container.setAttribute("data", pages[currentpage])
-				console.log(pages[currentpage])
+				container.setAttribute("data", pages[currentpage][0])
+				label.setInnerHTML(pages[currentpage][1])
+				console.log(pages[currentpage][0])
 			}
 			function next(){
 				if(currentpage == pages.length - 1){
@@ -63,8 +67,9 @@
 				} else {
 					currentpage ++
 				}
-				container.setAttribute("data", pages[currentpage])
-				console.log(pages[currentpage])
+				container.setAttribute("data", pages[currentpage][0])
+				label.setInnerHTML(pages[currentpage][1])
+				console.log(pages[currentpage][0])
 			}
 		</script>
 	</body>
