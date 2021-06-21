@@ -58,7 +58,7 @@
 			let label = document.getElementById("label")
 			let currentpage = 0
 			container.setAttribute("data", pages[currentpage][0])
-			container.focus()
+			container.contentWindow.focus()
 			label.innerHTML = pages[currentpage][1]
 			function previous(){
 				if(currentpage == 0){
@@ -68,7 +68,7 @@
 				}
 				container.setAttribute("data", pages[currentpage][0])
 				label.innerHTML = pages[currentpage][1]
-				container.focus()
+				container.contentWindow.focus()
 				console.log(pages[currentpage][0])
 			}
 			function next(){
@@ -79,7 +79,7 @@
 				}
 				container.setAttribute("data", pages[currentpage][0])
 				label.innerHTML = pages[currentpage][1]
-				container.focus()
+				container.contentWindow.focus()
 				console.log(pages[currentpage][0])
 			}
 		</script>
