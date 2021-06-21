@@ -46,20 +46,21 @@
 			container.setAttribute("data", pages[currentpage])
 			function previous(){
 				if(currentpage == 0){
-				currentpage = pages.length - 1
-			} else {
-				currentpage --
-			}
-			container.setAttribute("data", pages[currentpage])
-			console.log(pages[currentpage])
+					currentpage = pages.length - 1
+				} else {
+					currentpage --
+				}
+				container.setAttribute("data", pages[currentpage])
+				console.log(pages[currentpage])
 			}
 			function next(){
-			if(currentpage == pages.length - 1){
-				currentpage = 0
-			} else {
-				currentpage ++
-			}
+				if(currentpage == pages.length - 1){
+					currentpage = 0
+				} else {
+					currentpage ++
+				}
 				container.setAttribute("data", pages[currentpage])
+				console.log(pages[currentpage])
 			}
 		</script>
 	</body>
