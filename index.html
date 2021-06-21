@@ -6,7 +6,7 @@
 	<body>
 		<div id=header>
 			<button onclick="previous()" id=previous>Previous</button>
-		    <button onclick="next()" id=next>Next</button>
+		    	<button onclick="next()" id=next>Next</button>
 		</div>
 		<object id=container></object>
 		<style>
@@ -32,11 +32,11 @@
 		</style>
 		<script>
 			let pages = [
-			"touchscreen.html"
-		    ]
+				"touchscreen.html"
+			]
 			let container = document.getElementById("container")
-		    let currentpage = 0
-		    container.setAttribute("data", pages[currentpage])
+			let currentpage = 0
+			container.setAttribute("data", pages[currentpage])
 			function previous(){
 				if(currentpage == 0){
 				currentpage = pages.length - 1
