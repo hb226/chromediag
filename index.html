@@ -8,7 +8,7 @@
 			<button onclick="previous()" id=previous>Previous</button>
 		    	<button onclick="next()" id=next>Next</button>
 		</div>
-		<object id=container></object>
+		<object id=pagecontainer></object>
 		<style>
 			body, html{
 				width: 100%;
@@ -41,7 +41,7 @@
 			let pages = [
 				"touchscreen.html"
 			]
-			let container = document.getElementById("container")
+			let container = document.getElementById("pagecontainer")
 			let currentpage = 0
 			container.setAttribute("data", pages[currentpage])
 			function previous(){
