@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+	<body class=keydetect>
+        <h1 id=displayheader></h1>
+        <script>
+            let displayheader = document.getElementById("displayheader")
+            let keydetect = document.getElementsByClassName("keydetect")
+            keydetect[0].addEventListener("keydown", event => {
+                displayheader.innerHTML = event.key
+            })
+        </script>
+    </body>
+</html>
