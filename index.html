@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta charset="utf-8"/>
 		<title>Chromebook Diagnostics</title>
 	</head>
 	<body>
@@ -58,6 +59,9 @@
 			let label = document.getElementById("label")
 			let currentpage = 0
 			container.setAttribute("data", pages[currentpage][0])
+			if(container.contentWindow != null){
+				container.contentWindow.focus()
+			}
 			label.innerHTML = pages[currentpage][1]
 			function previous(){
 				if(currentpage == 0){
@@ -67,7 +71,9 @@
 				}
 				container.setAttribute("data", pages[currentpage][0])
 				label.innerHTML = pages[currentpage][1]
-				//container.contentWindow.focus()
+				if(container.contentWindow != null){
+					container.contentWindow.focus()
+				}
 				console.log(pages[currentpage][0])
 			}
 			function next(){
@@ -78,7 +84,9 @@
 				}
 				container.setAttribute("data", pages[currentpage][0])
 				label.innerHTML = pages[currentpage][1]
-				//container.contentWindow.focus()
+				if(container.contentWindow != null){
+					container.contentWindow.focus()
+				}
 				console.log(pages[currentpage][0])
 			}
 		</script>
