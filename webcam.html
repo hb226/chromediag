@@ -16,12 +16,14 @@
         <video id="videoIn" autoplay></video>
         <script type="text/javascript">
 			var front = false;
-			document.getElementById('flip-button').onclick = function() { front = !front; };
-
-			var constraints = { video: { facingMode: (front? "user" : "environment") } };
-
-            var p = navigator.mediaDevices.getUserMedia(constraints);
-            p.then(function(stream){document.getElementById("videoIn").srcObject = stream;});
+			var constraints = { video: { facingMode: (front? "user" : "environment") } }
+			document.getElementById('flip-button').onclick = function() { front = !front; initCam(constraints)};
+			
+			function initCam(constr){
+				var p = navigator.mediaDevices.getUserMedia(constr);
+				p.then(function(stream){document.getElementById("videoIn").srcObject = stream;});
+			}
+			initCam()
         </script>
     </body>
 </html>
