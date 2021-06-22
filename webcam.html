@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+		<meta charset="utf-8"/>
         <title>Webcam Test</title>
         <style>
             html, body, #videoIn{
@@ -11,9 +12,15 @@
         </style>
     </head>
     <body>
+		<button id=flip-button>Flip</button>
         <video id="videoIn" autoplay></video>
         <script type="text/javascript">
-            var p = navigator.mediaDevices.getUserMedia({ video: true });
+			var front = false;
+			document.getElementById('flip-button').onclick = function() { front = !front; };
+
+			var constraints = { video: { facingMode: (front? "user" : "environment") } };
+
+            var p = navigator.mediaDevices.getUserMedia(constraints);
             p.then(function(stream){document.getElementById("videoIn").srcObject = stream;});
         </script>
     </body>
