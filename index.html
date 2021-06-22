@@ -58,8 +58,8 @@
 			let label = document.getElementById("label")
 			let currentpage = 0
 			container.setAttribute("data", pages[currentpage][0])
-			container.contentWindow.focus()
 			label.innerHTML = pages[currentpage][1]
+			container.contentWindow.focus()
 			function previous(){
 				if(currentpage == 0){
 					currentpage = pages.length - 1
