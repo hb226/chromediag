@@ -65,7 +65,7 @@
             ]
 		    
 		    for(i=0; i < keylist.length; i++){
-		    	keycontainer.innerHTML += "<p class=key id=" + keylist[i][1] + ">" + keylist[i][0] + "</p>"
+		    	keycontainer.innerHTML += "<div class=key><p id=" + keylist[i][1] + ">" + keylist[i][0] + "</p></div>"
 		    }
 		    
 		    keydetect[0].addEventListener("keydown", event => {
