@@ -117,7 +117,7 @@
 					if (event.keyCode === 9 || event.keyCode === 191 || event.keyCode === 222) {
 						event.preventDefault();
     }
-					displayheader.innerHTML = '"' + event.key + '"'
+					displayheader.innerHTML = '"' + event.key + '" ' + event.keyCode
 					let key = document.getElementById(event.keyCode + "_" + event.location)
 					if(key != null){
 						if(key.id == event.keyCode + "_" + event.location){
