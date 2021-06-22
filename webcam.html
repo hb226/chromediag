@@ -9,13 +9,25 @@
                 width: 100%;
                 overflow-y: hidden;
                 overflow-x: hidden;
+			}
+			#flip-button{
+				width: 100%;
+				border-radius: 5px;
+				margin-top: 0;
+				margin-bottom: 0;
+				font-size: 30pt;
+				text-align: center;
+				vertical-align: middle;
+				color: #0090FF;
+				background-color: #606060;
+			}
         </style>
     </head>
     <body>
 		<button id=flip-button>Flip</button>
         <video id="videoIn" autoplay></video>
         <script type="text/javascript">
-			var front = false;
+			var front = true;
 			document.getElementById('flip-button').onclick = function() { front = !front; initCam({ video: { facingMode: (front? "user" : "environment") } })};
 			
 			function initCam(constr){
