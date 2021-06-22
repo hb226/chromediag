@@ -46,6 +46,7 @@
 		<h1 id="displayheader">Blue highlighted keys require 'Ctrl + Alt + &#x1F50D' to test</h1>
 		<div id="keycontainer"></div>
 		<script>
+			//let displayheader = document.getElementById("displayheader")
 			let keycontainer = document.getElementById("keycontainer")
 			let keydetect = document.getElementsByClassName("keydetect")
 			let keylist = [
@@ -150,20 +151,41 @@
 			}
 		
 			document.addEventListener("keydown", event => {
-				if (event.keyCode === 9 || event.keyCode === 191 || event.keyCode === 222) {
+				console.log(event)
+				keyCode = event.keyCode
+				if(keyCode === 9 || keyCode === 191 || keyCode === 222) {
 					event.preventDefault();
+				} else if(keyCode === 59){
+				 keyCode = 186
+				} else if(keyCode === 173){
+				 keyCode = 189
+				} else if(keyCode === 61){
+				 keyCode = 187
 				}
-				let key = document.getElementById(event.keyCode + "_" + event.location)
+				let key = document.getElementById(keyCode + "_" + event.location)
 				if(key != null){
-					if(key.id == event.keyCode + "_" + event.location){
+					if(key.id == keyCode + "_" + event.location){
+						var a = new Audio("josh.mp3")
+						a.play()
 						key.style.backgroundColor = "#FF0000"
 					}
 				}
 			})		    
 			document.addEventListener("keyup", event => {
-				let key = document.getElementById(event.keyCode + "_" + event.location)
+				console.log(event)
+				keyCode = event.keyCode
+				if(keyCode === 9 || keyCode === 191 || keyCode === 222) {
+					event.preventDefault();
+				} else if(keyCode === 59){
+				 keyCode = 186
+				} else if(keyCode === 173){
+				 keyCode = 189
+				} else if(keyCode === 61){
+				 keyCode = 187
+				}
+				let key = document.getElementById(keyCode + "_" + event.location)
 				if(key != null){
-					if(key.id == event.keyCode + "_" + event.location){
+					if(key.id == keyCode + "_" + event.location){
 						key.style.backgroundColor = "#008800"
 					}
 				}
