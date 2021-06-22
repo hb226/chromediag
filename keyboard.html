@@ -9,21 +9,24 @@
 			font-size: 30px;
 		}
 		.keyrow{
-			margin-top: 5px;
-			margin-bottom: 5px;
+			margin-top: 2px;
+			margin-bottom: 2px;
 			display: flex;
 			flex-direction: row;
 			justify-content: center;
 			align-items: center;
 		}
 		.key{
-			margin-left: 5px;
-			margin-rightL 5px;
+			margin-left: 2px;
+			margin-right: 2px;
 			border-style: solid;
 			border-radius: 5px;
 			border-color: #999999;
 			width: 90px;
 			height: 70px;
+			vertical-align: middle;
+		}
+		.keylabel{
 			vertical-align: middle;
 		}
 		</style>
@@ -127,7 +130,7 @@
 			for(i=0; i < keylist.length; i++){
 				let elementstring = ""
 				for(o=0; o < keylist[i].length; o++){
-					elementstring += "<div class=key data-location=" + keylist[i][o][2] + " id=" + keylist[i][o][1] + "_" + keylist[i][o][2] + "><p"  + ">" + keylist[i][o][0] + "</p></div>"
+					elementstring += "<div class=key data-location=" + keylist[i][o][2] + " id=" + keylist[i][o][1] + "_" + keylist[i][o][2] + "><p class=keylabel>" + keylist[i][o][0] + "</p></div>"
 				}
 				keycontainer.innerHTML += "<div class=keyrow>" + elementstring.replaceAll("undefined", "0") + "</div>"
 			}
