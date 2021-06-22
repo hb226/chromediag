@@ -19,8 +19,9 @@
 			border-color: #999999;
 			padding-left: 15px;
 			padding-right: 15px;
-			padding-top: 10px;
-			padding-bottom: 10px;
+			/*padding-top: 10px;
+			padding-bottom: 10px;*/
+			height: 35pt;
 			vertical-align: middle;
 		}
 		.keylabel{
@@ -29,7 +30,7 @@
 			vertical-align: middle;
 			color: #FFFFFF;
 			text-align: center;
-			font-size: 28px;
+			font-size: 24pt;
 		}
 		</style>
 	</head>
@@ -145,6 +146,8 @@
 				let key = document.getElementById(event.keyCode + "_" + event.location)
 				if(key != null){
 					if(key.id == event.keyCode + "_" + event.location){
+						var a = new Audio("josh.mp3")
+						a.play()
 						key.setAttribute("style", "background-color: #FF0000; border-color: #00FF00")
 					}
 				}
