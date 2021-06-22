@@ -46,11 +46,9 @@
 		<h1 id="displayheader">Blue highlighted keys require 'Ctrl + Alt + &#x1F50D' to test</h1>
 		<div id="keycontainer"></div>
 		<script>
-			//let displayheader = document.getElementById("displayheader")
 			let keycontainer = document.getElementById("keycontainer")
 			let keydetect = document.getElementsByClassName("keydetect")
 			let keylist = [
-				// FORMAT: [Text, keypress_event.KeyCode, keypress_event.Location, isSpecialKey]
 				[
 					["Esc", "27", 0],
 					["←", "112", 0, 1],
@@ -155,24 +153,17 @@
 				if (event.keyCode === 9 || event.keyCode === 191 || event.keyCode === 222) {
 					event.preventDefault();
 				}
-				//displayheader.innerHTML = '"' + event.key + '" ' + event.keyCode + " " + event.location
 				let key = document.getElementById(event.keyCode + "_" + event.location)
 				if(key != null){
 					if(key.id == event.keyCode + "_" + event.location){
-						var a = new Audio("josh.mp3")
-						a.play()
-						//key.setAttribute("style", "background-color: #FF0000; border-color: #00FF00")
 						key.style.backgroundColor = "#FF0000"
-						//key.style.borderColor = "#00FF00"
 					}
 				}
 			})		    
 			document.addEventListener("keyup", event => {
-				//displayheader.innerHTML = '"' + event.key + '"'
 				let key = document.getElementById(event.keyCode + "_" + event.location)
 				if(key != null){
 					if(key.id == event.keyCode + "_" + event.location){
-						//key.setAttribute("style", key.getAttribute("style").replace("#FF0000", "#000000"))
 						key.style.backgroundColor = "#008800"
 					}
 				}
