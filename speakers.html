@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8"/>
 		<style>
-		body, html{
+		body, html, #buttoncontainer{
 			width: 100%;
 			height: 100%;
 			margin: 0;
@@ -17,13 +17,18 @@
 			justify-content: center;
 			align-items: center;
 		}
+		button{
+			height: 100%;
+			width: 33%;
+			font-size: 40pt;
+		}
 		</style>
 	</head>
 	<body>
 		<div id=buttoncontainer>
-			<button id=left>Left</button>
-			<button id=center>Center</button>
-			<button id=right>Right</button>
+			<button id=left onClick="new Audio('left.oga').play()">Left</button>
+			<button id=center onClick="new Audio('right.oga').play()">Center</button>
+			<button id=right onClick="new Audio('center.oga').play()">Right</button>
 		</div>
 	</body>
 </html>
