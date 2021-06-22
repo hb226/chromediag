@@ -6,11 +6,11 @@
 	</head>
 	<body>
 		<div id=header>
-			<button onclick="previous()" id=previous>Previous</button>
+			<button id=previous disabled>Previous</button>
 			<h2 id=label></h2>
-		    	<button onclick="next()" id=next>Next</button>
+			<button id=next disabled>Next</button>
 		</div>
-		<object id=pagecontainer></object>
+		<object id=pagecontainer onload="enableButtons()"></object>
 		<style>
 			body, html{
 				width: 100%;
@@ -57,14 +57,31 @@
 				["speakers.html", "Speakers"]
 			]
 			let container = document.getElementById("pagecontainer")
+			let next = document.getElementById("next")
+			let previous = document.getElementById("previous")
 			let label = document.getElementById("label")
 			let currentpage = 0
+			
 			container.setAttribute("data", pages[currentpage][0])
+			
 			if(container.contentWindow != null){
 				container.contentWindow.focus()
 			}
+			
 			label.innerHTML = pages[currentpage][1]
-			function previous(){
+			
+			function enableButtons(){
+				previous.removeAttribute("disabled")
+				next.removeAttribute("disabled")
+			}
+			
+			function disableButtons(){
+				previous.setAttribute("disabled", "true")
+				next.setAttribute("disabled", "true")
+			}
+			
+			previous.addEventListener("click", event => {
+				disableButtons()
 				if(currentpage == 0){
 					currentpage = pages.length - 1
 				} else {
@@ -76,8 +93,10 @@
 					container.contentWindow.focus()
 				}
 				console.log(pages[currentpage][0])
-			}
-			function next(){
+			})
+			
+			next.addEventListener("click", event => {
+				disableButtons()
 				if(currentpage == pages.length - 1){
 					currentpage = 0
 				} else {
@@ -89,7 +108,7 @@
 					container.contentWindow.focus()
 				}
 				console.log(pages[currentpage][0])
-			}
+			})
 		</script>
 	</body>
 </html>
