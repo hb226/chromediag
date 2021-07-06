@@ -4,37 +4,59 @@
 		<meta charset="utf-8"/>
         <title>Webcam Test</title>
         <style>
-            html, body, #videoIn{
+            html, body{
                 height: 100%;
                 width: 100%;
                 overflow-y: hidden;
                 overflow-x: hidden;
 			}
-			#flip-button{
- 				width: 100%;
-				border-radius: 5px;
-				margin-top: 0;
-				margin-bottom: 0;
-				font-size: 30pt;
+			#centered{
+				display: flex;
+				justify-content: center;
+				width: 100%;
+				margin: 0;
+				padding: 0;
+			}
+			.cam{
+				width: 50%;
+				background-color: #444444;
+				color: #FFFFFF;
 				text-align: center;
-				vertical-align: middle;
-				color: #0090FF;
-				background-color: #606060;
+				margin: 0;
+				padding: 0;
+			}
+			video{
+				margin: 0;
+				padding: 0;
+				width: 100%;
 			}
         </style>
     </head>
     <body>
-		<button id=flip-button>Flip</button>
-        <video id="videoIn" autoplay></video>
+		<div id=centered>
+			<div class="cam">
+				<h1>Front</h1>
+				<video id="frontcam" autoplay></video>
+			</div>
+			<div class="cam">
+				<h1>Rear</h1>
+				<video id="rearcam" autoplay></video>
+			</div>
+		</div>
         <script type="text/javascript">
-			var front = false;
-			document.getElementById('flip-button').onclick = function() { front = !front; initCam({ video: { facingMode: (front? "user" : "environment") } })};
-			
-			function initCam(constr){
+			function frontCam(){
+				const constr = { video: { facingMode: { exact: "user" } } }
 				var p = navigator.mediaDevices.getUserMedia(constr);
-				p.then(function(stream){document.getElementById("videoIn").srcObject = stream;});
+				p.then(function(stream){document.getElementById("frontcam").srcObject = stream;}).catch(function(error){console.log("Front Bad")});
 			}
-			initCam({ video: { facingMode: (front? "user" : "environment") } })
+			function rearCam(){
+				const constr = { video: { facingMode: { exact: "environment"} } }
+				var p = navigator.mediaDevices.getUserMedia(constr);
+				p.then(function(stream){document.getElementById("rearcam").srcObject = stream;}).catch(function(error){console.log("Rear Bad")});
+			}
+			frontCam()
+			rearCam()
+			
         </script>
     </body>
 </html>
