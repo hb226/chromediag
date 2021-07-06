@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<meta charset="utf-8"/>
+        <title>Microphone Test</title>
+        <style>
+			html, body{
+				height: 100%
+				width: 100%
+				overflow-y: hidden
+  				overflow-x: hidden
+			}
+			canvas{
+				height: 100%
+				width: 100%
+			}
+        </style>
+    </head>
+    <body>
+		<canvas id="canvas"></canvas>
+        <script type="text/javascript">
+			(async function(){
+				var canvas = document.getElementById("canvas")
+				var dpi = window.devicePixelRatio
+				var canvasCtx = canvas.getContext("2d")
+				var WIDTH = 4096
+				var HEIGHT = 2048
+				canvas.width = WIDTH
+				canvas.height = HEIGHT
+				var spacing = 4
+				
+				var p = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true,  autoGainControl: false } })
+				var audioCtx = new AudioContext()
+				var audioSource = audioCtx.createMediaStreamSource(p)
+				
+				var analyser = audioCtx.createAnalyser()
+
+				audioSource.connect(analyser)
+
+				analyser.fftSize = 128
+				analyser.smoothingTimeConstant = 0.92
+				var bufferLength = analyser.frequencyBinCount
+				console.log(bufferLength)
+				var dataArray = new Uint8Array(bufferLength)
+
+				canvasCtx.clearRect(0, 0, WIDTH, HEIGHT)
+
+				function draw() {
+				  drawVisual = requestAnimationFrame(draw)
+
+				  analyser.getByteFrequencyData(dataArray)
+
+				  canvasCtx.fillStyle = 'rgb(0, 0, 0)'
+				  canvasCtx.fillRect(0, 0, WIDTH, HEIGHT)
+
+				  var barWidth = ((WIDTH / bufferLength) - spacing)
+				  var barHeight
+				  var x = 0
+
+				  for(var i = 0; i < bufferLength; i++) {
+					barHeight = dataArray[i]
+					
+					canvasCtx.fillStyle = 'rgb(0,' + barHeight + ',' + barHeight*2 + ')'
+					canvasCtx.fillRect(x,HEIGHT-barHeight*8,barWidth,barHeight*8)
+
+					x += barWidth + spacing
+				  }
+				}
+
+				draw()
+			}())
+        </script>
+    </body>
+</html>
