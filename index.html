@@ -4,53 +4,98 @@
 		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 		<meta charset="utf-8"/>
 		<title>Chromebook Diagnostics</title>
-	</head>
-	<body>
-		<div id=header>
-			<button id=previous disabled>Previous</button>
-			<h2 id=label></h2>
-			<button id=next disabled>Next</button>
-		</div>
-		<object id=pagecontainer onload="enableButtons()"></object>
 		<style>
 			body, html{
 				width: 100%;
 				height: 100%;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
 				margin: 0;
-				overflow-y: hidden;
-  				overflow-x: hidden;
-				background-color: #000000;
+				background-color: black;
 			}
-			#pagecontainer{
-				width: 100%;
-				height: 90%;
-				margin: 0;
-
-			}
-			#header{
+			#buttoncontainer{
 				display: flex;
 				flex-direction: row;
 				justify-content: center;
-				align-items: center;
-				/*display: inline-block;*/
-				width: 100%;
-				height: 10%;
-				margin: 0;
+				height: 8%;
 			}
-			button, #label{
- 				width: 30%;
-				border-radius: 5px;
-				margin-top: 0;
-				margin-bottom: 0;
+			#buttoncontainer>button{
+				align-items: center;
+				margin-left: 0.25%;
+				margin-right: 0.25%;
+				margin-top: 0.25%;
+				margin-bottom: 0.25%;
+				padding: 0;
 				height: 100%;
-				font-size: 30pt;
-				text-align: center;
-				vertical-align: middle;
-				color: #0090FF;
-				background-color: #606060;
+				width: 33%;
+				border-style: none;
+				border-radius: 3px;
+			}
+			.label, button{
+				height: 100%;
+				width: 100%;
+				margin: auto;
+				font-size: 32pt;
+				color: white;
+				background-color: #555555;
+				border-radius: 3px;
+				line-height: 175%;
+			}
+			#buttoncontainer button:hover, .label:hover{
+				background-color: #5F5F5F;
+			}
+			#buttoncontainer button:active, .label:active{
+				background-color: #666666;
+			}
+			.dropdown-content{
+				display: none;
+				position: absolute;
+				background-color: #5F5F5F;
+				z-index: 1;
+				width: 30%;
+				top: 9%;
+				border-radius: 3px;
+			}
+			.dropoption{
+				color: black;
+				padding: 12px 16px;
+				text-decoration: none;
+				display: block;
+				width: 100%;
+				border-style: none;
+				color: white;
+			}
+			#pagecontainer{
+				height: 90%;
+				width: 99.5%;
+				margin: auto;
+				border-style: none;
+			}
+			.show{
+				display: block;
 			}
 		</style>
+	</head>
+	<body>
+		<div id=buttoncontainer>
+			<button id=prevbutton><p class=label>Previous</p></button>
+			<button id=dropbutton><p id=droplabel class=label></p></button>
+			<div id=dropdown-content class=dropdown-content></div>
+			<button id=nextbutton><p class=label>Next</p></button>
+		</div>
+		<iframe id=pagecontainer></iframe>
 		<script>
+			let prevbutton = document.getElementById("prevbutton")
+			let dropbutton = document.getElementById("dropbutton")
+			let droplabel = document.getElementById("droplabel")
+			let dropdown = document.getElementById("dropdown")
+			let nextbutton = document.getElementById("nextbutton")
+			let dropdowncontent = document.getElementById("dropdown-content")
+
+			let pagecontainer = document.getElementById("pagecontainer")
+			
+			let currentpage = 0
 			let pages = [
 				["touchscreen.html", "Touch Screen"],
 				["webcam.html", "Webcam"],
@@ -58,59 +103,56 @@
 				["keyboard.html", "Keyboard"],
 				["speakers.html", "Speakers"]
 			]
-			let container = document.getElementById("pagecontainer")
-			let next = document.getElementById("next")
-			let previous = document.getElementById("previous")
-			let label = document.getElementById("label")
-			let currentpage = 0
 			
-			container.setAttribute("data", pages[currentpage][0])
-			
-			if(container.contentWindow != null){
-				container.contentWindow.focus()
+			function updateView(){
+				droplabel.innerHTML = pages[currentpage][1]
+				pagecontainer.setAttribute("src", pages[currentpage][0])
+				
+				buttonlist = ""
+				pages.forEach(function(page, index){
+					buttonlist += "<button page-data=" + index + " class=dropoption>" + page[1] + "</button>"
+				})
+				dropdowncontent.innerHTML = buttonlist
+				
+				let dropoptionbuttons = document.querySelectorAll(".dropoption")
+				dropoptionbuttons.forEach(function(button){
+					button.addEventListener("click", (event) => {
+						currentpage = button.getAttribute("page-data")
+						dropdowncontent.classList.toggle("show")
+						updateView()
+					})
+				})
 			}
 			
-			label.innerHTML = pages[currentpage][1]
-			
-			function enableButtons(){
-				previous.removeAttribute("disabled")
-				next.removeAttribute("disabled")
-			}
-			
-			function disableButtons(){
-				previous.setAttribute("disabled", "true")
-				next.setAttribute("disabled", "true")
-			}
-			
-			previous.addEventListener("click", event => {
-				disableButtons()
-				if(currentpage == 0){
-					currentpage = pages.length - 1
+			prevbutton.addEventListener("click", (event) => {
+				if(currentpage-1 < 0){
+					currentpage = pages.length-1
 				} else {
 					currentpage --
 				}
-				container.setAttribute("data", pages[currentpage][0])
-				label.innerHTML = pages[currentpage][1]
-				if(container.contentWindow != null){
-					container.contentWindow.focus()
-				}
-				console.log(pages[currentpage][0])
+				updateView()
 			})
-			
-			next.addEventListener("click", event => {
-				disableButtons()
-				if(currentpage == pages.length - 1){
+			nextbutton.addEventListener("click", (event) => {
+				if(currentpage+1 > pages.length-1){
 					currentpage = 0
 				} else {
 					currentpage ++
 				}
-				container.setAttribute("data", pages[currentpage][0])
-				label.innerHTML = pages[currentpage][1]
-				if(container.contentWindow != null){
-					container.contentWindow.focus()
-				}
-				console.log(pages[currentpage][0])
+				updateView()
 			})
+			dropbutton.addEventListener("click", (event) => {
+				dropdowncontent.classList.toggle("show")
+			})
+			window.onclick = function(event){
+				if(!event.target.matches('.dropdown-content') && !event.target.matches('#droplabel')) {
+					if (dropdowncontent.classList.contains('show')) {
+						dropdowncontent.classList.remove('show');
+					}
+				}
+			}
+			updateView()
+
+
 		</script>
 	</body>
 </html>
