@@ -18,25 +18,9 @@
 
 		}( typeof window !== "undefined" ? window : this, function ( window, document ) {
 
-  var CANVAS = 'canvas';
-  var WEBGL = 'webgl';
-  var DOM = 'dom';
-
-
-
-  function isArray( object ) {
-
-    return Object.prototype.toString.call( object ) == '[object Array]';
-  }
-
   function isFunction( object ) {
 
     return typeof object == 'function';
-  }
-
-  function isNumber( object ) {
-
-    return typeof object == 'number';
   }
 
   function isString( object ) {
@@ -55,38 +39,29 @@
     return target;
   }
 
-
-  /*
-  ----------------------------------------------------------------------
-    Constructor
-  ----------------------------------------------------------------------
-  */
-
   function constructor( context ) {
 
     var counter = 0;
     var touches = [];
-    var resized = false;
-    var setup = false;
-    var ratio = window.devicePixelRatio || 1;
+    var ratio = window.devicePixelRatio;
 
-
-    var mouse = {
-      x:  0.0, y:  0.0,
-      ox: 0.0, oy: 0.0,
-      dx: 0.0, dy: 0.0
-    };
+    //var mouse = {
+    //  x:  0.0, y:  0.0,
+    //  ox: 0.0, oy: 0.0,
+    //  dx: 0.0, dy: 0.0
+    //};
 
     var eventMap = [
-
-      context.eventTarget || context.element,
-
-        pointer, 'mousedown', 'touchstart',
-        pointer, 'mousemove', 'touchmove',
-        pointer, 'mouseup', 'touchend',
-        pointer, 'click',
-        pointer, 'mouseout',
-        pointer, 'mouseover',
+      context.element,
+      pointer,
+	  'mousedown',
+	  'touchstart',
+      'mousemove',
+	  'touchmove',
+      'mouseup',
+	  'touchend',
+      'mouseout',
+      'mouseover'
     ];
 
     function trigger( method ) {
@@ -127,7 +102,6 @@
         trigger( context.draw );
 
       }
-
       counter++
     }
 
@@ -160,7 +134,6 @@
 
         context.scale( ratio, ratio );
 
-      if ( setup ) trigger( context.resize );
     }
 
     function align( touch, target ) {
@@ -193,7 +166,6 @@
 
     function process( event ) {
 
-      event.preventDefault();
 
       if ( event.touches ) {
 
@@ -202,14 +174,14 @@
         for ( index = 0; index < event.touches.length; index++ )
 
           touches[ index ] = augment( event.touches[ index ], touches[ index ] );
+	  }
+      //} else {
 
-      } else {
+      //  touches.length = 0;
+      //  touches[0] = augment( event, mouse );
+      //}
 
-        touches.length = 0;
-        touches[0] = augment( event, mouse );
-      }
-
-      extend( mouse, touches[0], true );
+      //extend( mouse, touches[0], true );
 
       return event;
     }
@@ -244,16 +216,14 @@
 
     return ( start(), bind( true ), resize(), update(), context );
   }
-
-  var element
-  var context
+  
   var Sketch = {
 
     create: function( options ) {
 
-      element = options.element = document.createElement( 'canvas' );
+      var element = options.element = document.createElement( 'canvas' );
 
-      context = options.context = element.getContext( '2d', options )
+      var context = options.context = element.getContext( '2d', options )
 
       document.body.appendChild( element );
 
