@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<meta charset="utf-8"/>
+        <title>Microphone Test</title>
+        <style>
+			html, body{
+				height: 100%;
+				width: 100%;
+				overflow-y: hidden;
+  				overflow-x: hidden;
+			}
+			canvas{
+				height: 100%;
+				width: 100%;
+				overflow-y: hidden;
+  				overflow-x: hidden;
+			}
+        </style>
+    </head>
+    <body>
+		<canvas id="canvas"></canvas>
+        <script type="text/javascript">
+			(async function(){
+				var body = document.querySelector("body")
+				var canvas = document.getElementById("canvas")
+				var dpi = window.devicePixelRatio
+				var canvasCtx = canvas.getContext("2d")
+				var WIDTH = window.innerWidth
+				var HEIGHT = window.innerHeight
+				canvas.width = WIDTH
+				canvas.height = HEIGHT
+				var spacing = 4
+				
+				var p = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true,  autoGainControl: false } })
+				var audioCtx = new AudioContext()
+				var audioSource = audioCtx.createMediaStreamSource(p)
+				
+				
+				var oscillator = audioCtx.createOscillator()
+				oscillator.type = "square"
+				oscillator.start()
+				
+				var oscillatorGain = audioCtx.createGain()
+				var oscillatorToggle = audioCtx.createGain()
+
+				oscillatorToggle.gain.value = 0
+				oscillator.connect(oscillatorToggle)
+				oscillatorToggle.connect(oscillatorGain)
+				oscillatorGain.connect(audioCtx.destination)
+				
+				var analyser = audioCtx.createAnalyser()
+
+				audioSource.connect(analyser)
+
+				analyser.fftSize = 128
+				analyser.smoothingTimeConstant = 0.90
+				var bufferLength = analyser.frequencyBinCount
+				console.log(bufferLength)
+				var dataArray = new Uint8Array(bufferLength)
+
+				canvasCtx.clearRect(0, 0, WIDTH, HEIGHT)
+
+				canvas.addEventListener("mousemove", (event) => {
+					if(event.buttons == 1){
+						oscillator.frequency.value = (event.clientX/canvas.clientWidth * 400) + 50
+						oscillatorGain.gain.value = (1 - event.clientY/canvas.clientHeight) * 2
+						console.log(event.clientX/canvas.clientWidth, event.clientY/canvas.clientHeight)
+					}
+				})
+				canvas.addEventListener("mousedown", (event) => {
+					oscillator.frequency.value = (event.clientX/canvas.clientWidth * 400) + 100
+					oscillatorGain.gain.value = (1 - event.clientY/canvas.clientHeight) * 2
+					oscillatorToggle.gain.value = 1
+				})
+
+				canvas.addEventListener("mouseup", (event) => {
+					oscillatorToggle.gain.value = 0
+				})
+				
+				canvas.addEventListener("mouseleave", (event) => {
+					oscillatorToggle.gain.value = 0
+				})
+
+				function draw() {
+				  drawVisual = requestAnimationFrame(draw)
+
+				  analyser.getByteFrequencyData(dataArray)
+
+				  canvasCtx.fillStyle = 'rgb(0, 0, 0)'
+				  canvasCtx.fillRect(0, 0, WIDTH, HEIGHT)
+
+				  var barWidth = ((WIDTH / bufferLength) - spacing)
+				  var barHeight
+				  var x = 0
+
+				  for(var i = 0; i < bufferLength; i++) {
+					barHeight = dataArray[i]
+					
+					canvasCtx.fillStyle = 'rgb(0,' + barHeight + ',' + barHeight*2 + ')'
+					canvasCtx.fillRect(x,HEIGHT-barHeight*4,barWidth,barHeight*4)
+
+					x += barWidth + spacing
+				  }
+				}
+
+				draw()
+			}())
+        </script>
+    </body>
+</html>
