@@ -45,11 +45,11 @@
     var touches = [];
     var ratio = window.devicePixelRatio;
 
-    //var mouse = {
-    //  x:  0.0, y:  0.0,
-    //  ox: 0.0, oy: 0.0,
-    //  dx: 0.0, dy: 0.0
-    //};
+    var mouse = {
+      x:  0.0, y:  0.0,
+      ox: 0.0, oy: 0.0,
+      dx: 0.0, dy: 0.0
+    };
 
     var eventMap = [
       context.element,
@@ -174,14 +174,14 @@
         for ( index = 0; index < event.touches.length; index++ )
 
           touches[ index ] = augment( event.touches[ index ], touches[ index ] );
-	  }
-      //} else {
 
-      //  touches.length = 0;
-      //  touches[0] = augment( event, mouse );
-      //}
+      } else {
 
-      //extend( mouse, touches[0], true );
+        touches.length = 0;
+        touches[0] = augment( event, mouse );
+      }
+
+      extend( mouse, touches[0], true );
 
       return event;
     }
