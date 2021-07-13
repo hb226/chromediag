@@ -1,0 +1,301 @@
+<!documenttype html>
+<html>
+    <head>
+        <style type="text/css">
+            html, body, canvas {
+                background: #000000;
+                overflow-y: hidden;
+  				overflow-x: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container"></div>
+        <script>
+        (function ( root, factory ) {
+
+		root.Sketch = factory( root, root.document );
+
+		}( typeof window !== "undefined" ? window : this, function ( window, document ) {
+
+  var CANVAS = 'canvas';
+  var WEBGL = 'webgl';
+  var DOM = 'dom';
+
+
+
+  function isArray( object ) {
+
+    return Object.prototype.toString.call( object ) == '[object Array]';
+  }
+
+  function isFunction( object ) {
+
+    return typeof object == 'function';
+  }
+
+  function isNumber( object ) {
+
+    return typeof object == 'number';
+  }
+
+  function isString( object ) {
+
+    return typeof object == 'string';
+  }
+
+  function extend( target, source, overwrite ) {
+
+    for ( var key in source )
+
+      if ( overwrite || !( key in target ) )
+
+        target[ key ] = source[ key ];
+
+    return target;
+  }
+
+
+  /*
+  ----------------------------------------------------------------------
+    Constructor
+  ----------------------------------------------------------------------
+  */
+
+  function constructor( context ) {
+
+    var counter = 0;
+    var touches = [];
+    var resized = false;
+    var setup = false;
+    var ratio = window.devicePixelRatio || 1;
+
+
+    var mouse = {
+      x:  0.0, y:  0.0,
+      ox: 0.0, oy: 0.0,
+      dx: 0.0, dy: 0.0
+    };
+
+    var eventMap = [
+
+      context.eventTarget || context.element,
+
+        pointer, 'mousedown', 'touchstart',
+        pointer, 'mousemove', 'touchmove',
+        pointer, 'mouseup', 'touchend',
+        pointer, 'click',
+        pointer, 'mouseout',
+        pointer, 'mouseover',
+    ];
+
+    function trigger( method ) {
+
+      if ( isFunction( method ) )
+
+        method.apply( context, [].splice.call( arguments, 1 ) );
+    }
+
+    function bind( on ) {
+
+      for ( index = 0; index < eventMap.length; index++ ) {
+
+        node = eventMap[ index ];
+
+        if ( isString( node ) )
+
+          target[ ( on ? 'add' : 'remove' ) + 'EventListener' ].call( target, node, handler, false );
+
+        else if ( isFunction( node ) )
+
+          handler = node;
+
+        else target = node;
+      }
+    }
+
+    function update() {
+
+      if ( context.running && !counter ) {
+
+        context.dt = ( clock = +new Date() ) - context.now;
+        context.millis += context.dt;
+        context.now = clock;
+
+        trigger( context.update );
+
+        trigger( context.draw );
+
+      }
+
+      counter++
+    }
+
+    function resize() {
+
+      target = context.canvas;
+
+	  h = context.height = window.innerHeight;
+	  w = context.width = window.innerWidth;
+      
+
+      if ( ratio ) {
+
+        target.style.height = h + 'px';
+        target.style.width = w + 'px';
+
+        w *= ratio;
+        h *= ratio;
+      }
+
+      if ( target.height !== h )
+
+        target.height = h
+
+      if ( target.width !== w )
+
+        target.width = w
+
+      if ( !context.autoclear && context.retina )
+
+        context.scale( ratio, ratio );
+
+      if ( setup ) trigger( context.resize );
+    }
+
+    function align( touch, target ) {
+
+      bounds = target.getBoundingClientRect();
+
+      touch.x = touch.pageX - bounds.left - (window.scrollX || window.pageXOffset);
+      touch.y = touch.pageY - bounds.top - (window.scrollY || window.pageYOffset);
+
+      return touch;
+    }
+
+    function augment( touch, target ) {
+
+      align( touch, context.element );
+
+      target = target || {};
+
+      target.ox = target.x || touch.x;
+      target.oy = target.y || touch.y;
+
+      target.x = touch.x;
+      target.y = touch.y;
+
+      target.dx = target.x - target.ox;
+      target.dy = target.y - target.oy;
+
+      return target;
+    }
+
+    function process( event ) {
+
+      event.preventDefault();
+
+      if ( event.touches ) {
+
+        touches.length = event.touches.length;
+
+        for ( index = 0; index < event.touches.length; index++ )
+
+          touches[ index ] = augment( event.touches[ index ], touches[ index ] );
+
+      } else {
+
+        touches.length = 0;
+        touches[0] = augment( event, mouse );
+      }
+
+      extend( mouse, touches[0], true );
+
+      return event;
+    }
+
+    function pointer( event ) {
+
+      event = process( event );
+
+      min = ( max = eventMap.indexOf( type = event.type ) ) - 1;
+
+      while( min )
+
+        isString( eventMap[ min ] ) ?
+
+          trigger( context[ eventMap[ min-- ] ], event ) :
+
+        isString( eventMap[ max ] ) ?
+
+          trigger( context[ eventMap[ max++ ] ], event ) :
+
+        min = 0;
+    }
+
+
+    function start() {
+
+      context.now = +new Date();
+      context.running = true;
+    }
+
+    context.touches = touches
+
+    return ( start(), bind( true ), resize(), update(), context );
+  }
+
+  var element
+  var context
+  var Sketch = {
+
+    create: function( options ) {
+
+      element = options.element = document.createElement( 'canvas' );
+
+      context = options.context = element.getContext( '2d', options )
+
+      document.body.appendChild( element );
+
+	  extend( context, options, true );
+	  return constructor( context )
+    },
+  };
+
+  return Sketch;
+
+}));
+
+
+        var COLOURS = [ '#6699F2', '#1D6BEF', '#1754BD', '#2F4770', '#0D3270', '#071B3D' ];
+        var radius = 20;
+
+        Sketch.create({
+			container: document.body,
+			globals: true,
+            autoclear: false,
+            retina: 'auto',
+
+
+            touchmove: function() {
+
+                for ( var i = this.touches.length - 1, touch; i >= 0; i-- ) {
+					console.log(i)
+                    touch = this.touches[i];
+
+                    this.lineCap = 'round';
+                    this.lineJoin = 'round';
+                    this.fillStyle = this.strokeStyle = COLOURS[ i % COLOURS.length ];
+                    this.lineWidth = radius;
+
+                    this.beginPath();
+                    this.moveTo( touch.ox, touch.oy );
+                    this.lineTo( touch.x, touch.y );
+                    this.stroke();
+                }
+            }
+        });
+        
+        </script>
+    </body>
+</html>
