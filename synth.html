@@ -118,6 +118,7 @@
 				canvasCtx.clearRect(0, 0, WIDTH, HEIGHT)
 
 				waveformbutton.addEventListener("click", (event) => {
+					audioCtx.resume()
 					if(currentwaveform == waveforms.length-1){
 						currentwaveform = 0
 					} else {
@@ -128,6 +129,7 @@
 				})
 				
 				modebutton.addEventListener("click", (event) => {
+					audioCtx.resume()
 					if(currentmode == modes.length-1){
 						currentmode = 0
 					} else {
