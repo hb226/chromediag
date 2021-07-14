@@ -2,7 +2,7 @@
 <html>
     <head>
 		<meta charset="utf-8"/>
-        <title>Microphone Test</title>
+        <title>Synth</title>
         <style>
 			html, body{
 				height: 100%;
@@ -16,9 +16,41 @@
 				overflow-y: hidden;
   				overflow-x: hidden;
 			}
+			#synthcontrols{
+				display: flex;
+				flex-direction: row;
+				justify-content: center;
+			}
+			#synthcontrols button, #frequencylabel{
+				align-items: center;
+				margin-left: 0.25%;
+				margin-right: 0.25%;
+				margin-top: 0.25%;
+				margin-bottom: 0.25%;
+				padding: 0;
+				width: 32%;
+				border-style: none;
+				border-radius: 3px;
+				font-size: 24pt;
+				color: white;
+				background-color: #555555;
+				border-radius: 3px;
+				text-align: center;
+			}
+			#synthcontrols button:hover{
+				background-color: #5F5F5F;
+			}
+			#synthcontrols button:active{
+				background-color: #666666;
+			}
         </style>
     </head>
     <body>
+		<div id=synthcontrols>
+			<button id=waveformbutton></button>
+			<p id=frequencylabel></p>
+			<button id=modebutton></button>
+		</div>
 		<canvas id="canvas"></canvas>
         <script type="text/javascript">
 			(async function(){
@@ -26,79 +58,175 @@
 				var canvas = document.getElementById("canvas")
 				var dpi = window.devicePixelRatio
 				var canvasCtx = canvas.getContext("2d")
-				var WIDTH = window.innerWidth
-				var HEIGHT = window.innerHeight
+				var WIDTH = canvas.clientWidth
+				var HEIGHT = canvas.clientHeight
+
+				var waveforms = [
+					"Square",
+					"Sine",
+					"Sawtooth",
+					"Triangle"
+				]
+				var modes = [
+					"Pan * Frequency",
+					"Frequency * Amplitude"
+				]
+				currentwaveform = 0
+				currentmode = 1
+				
+				var waveformbutton = document.getElementById("waveformbutton")
+				waveformbutton.innerHTML = waveforms[currentwaveform]
+				var modebutton = document.getElementById("modebutton")
+				modebutton.innerHTML = modes[currentmode]
+				var frequencyLabel = document.getElementById("frequencylabel")
+				frequencyLabel.innerHTML = "0 Hz"
+				
 				canvas.width = WIDTH
 				canvas.height = HEIGHT
-				var spacing = 4
-				
-				var p = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true,  autoGainControl: false } })
+				var spacing = 0
+				var bars = 256
+				var fadeconstant = 0.1
+				var timeconstant = 0.85
 				var audioCtx = new AudioContext()
-				var audioSource = audioCtx.createMediaStreamSource(p)
-				
-				
 				var oscillator = audioCtx.createOscillator()
-				oscillator.type = "square"
+				var freq = 0
+				oscillator.type = String(waveforms[currentwaveform]).toLowerCase()
 				oscillator.start()
+				let range = 500
+				let offset = 0
 				
 				var oscillatorGain = audioCtx.createGain()
+				oscillatorGain.gain.value = 2
 				var oscillatorToggle = audioCtx.createGain()
+				var oscillatorPan = audioCtx.createStereoPanner()
 
 				oscillatorToggle.gain.value = 0
 				oscillator.connect(oscillatorToggle)
-				oscillatorToggle.connect(oscillatorGain)
+				oscillatorToggle.connect(oscillatorPan)
+				oscillatorPan.connect(oscillatorGain)
 				oscillatorGain.connect(audioCtx.destination)
 				
 				var analyser = audioCtx.createAnalyser()
 
-				audioSource.connect(analyser)
+				oscillatorToggle.connect(analyser)
 
-				analyser.fftSize = 128
-				analyser.smoothingTimeConstant = 0.90
+				analyser.fftSize = 2*bars
+				analyser.smoothingTimeConstant = timeconstant
 				var bufferLength = analyser.frequencyBinCount
-				console.log(bufferLength)
 				var dataArray = new Uint8Array(bufferLength)
 
 				canvasCtx.clearRect(0, 0, WIDTH, HEIGHT)
 
-				canvas.addEventListener("mousemove", (event) => {
-					if(event.buttons == 1){
-						oscillator.frequency.value = (event.clientX/canvas.clientWidth * 400) + 50
-						oscillatorGain.gain.value = (1 - event.clientY/canvas.clientHeight) * 2
-						console.log(event.clientX/canvas.clientWidth, event.clientY/canvas.clientHeight)
+				waveformbutton.addEventListener("click", (event) => {
+					if(currentwaveform == waveforms.length-1){
+						currentwaveform = 0
+					} else {
+						currentwaveform ++
 					}
+					waveformbutton.innerHTML = waveforms[currentwaveform]
+					oscillator.type = String(waveforms[currentwaveform]).toLowerCase()
+				})
+				
+				modebutton.addEventListener("click", (event) => {
+					if(currentmode == modes.length-1){
+						currentmode = 0
+					} else {
+						currentmode	++
+					}
+					modebutton.innerHTML = modes[currentmode]
+				})
+
+				function init(event){
+					if(event.buttons == 1 || event.touches){
+						oscillatorToggle.gain.value = 1
+						if(modes[currentmode] == "Pan * Frequency"){
+							freq = ((1 - event.clientY/canvas.clientHeight) * range) + offset
+							oscillator.frequency.value = freq
+							oscillatorPan.pan.value = 2*(event.clientX-(canvas.clientWidth/2))/canvas.clientWidth
+						} else if(modes[currentmode] == "Frequency * Amplitude"){
+							freq = (event.clientX/canvas.clientWidth * range) + offset
+							oscillator.frequency.value = freq
+							oscillatorGain.gain.value = (1 - event.clientY/canvas.clientHeight) * 2
+						}
+						frequencyLabel.innerHTML = Math.round(freq) + " Hz"
+					}
+				}
+				function deinit(event){
+					oscillatorToggle.gain.value = 0
+					frequencyLabel.innerHTML = "0 Hz"
+				}
+				function move(event){
+					if(event.buttons == 1 || event.touches){
+						oscillatorToggle.gain.value = 1
+						if(modes[currentmode] == "Pan * Frequency"){
+							freq = ((1 - event.clientY/canvas.clientHeight) * range) + offset
+							oscillator.frequency.value = freq
+							oscillatorPan.pan.value = 2*(event.clientX-(canvas.clientWidth/2))/canvas.clientWidth
+						} else if(modes[currentmode] == "Frequency * Amplitude"){
+							freq = (event.clientX/canvas.clientWidth * range) + offset
+							oscillator.frequency.value = freq
+							oscillatorGain.gain.value = (1 - event.clientY/canvas.clientHeight) * 2
+						}
+						frequencyLabel.innerHTML = Math.round(freq) + " Hz"
+					}
+				}
+
+				canvas.addEventListener("mousemove", (event) => {
+					move(event)
+				})
+				canvas.addEventListener("touchmove", (event) => {
+					event.clientX = event.touches[0].clientX
+					event.clientY = event.touches[0].clientY
+					console.log(event)
+					move(event)
 				})
 				canvas.addEventListener("mousedown", (event) => {
-					oscillator.frequency.value = (event.clientX/canvas.clientWidth * 400) + 100
-					oscillatorGain.gain.value = (1 - event.clientY/canvas.clientHeight) * 2
-					oscillatorToggle.gain.value = 1
+					init(event)
+				})
+				canvas.addEventListener("touchstart", (event) => {
+					event.clientX = event.touches[0].clientX
+					event.clientY = event.touches[0].clientY
+					console.log(event)
+					init(event)
+				})
+				canvas.addEventListener("mouseenter", (event) => {
+					init(event)
 				})
 
 				canvas.addEventListener("mouseup", (event) => {
-					oscillatorToggle.gain.value = 0
+					deinit(event)
 				})
-				
+				canvas.addEventListener("touchend", (event) => {
+					deinit(event)
+				})
+				canvas.addEventListener("touchcancel", (event) => {
+					deinit(event)
+				})
 				canvas.addEventListener("mouseleave", (event) => {
-					oscillatorToggle.gain.value = 0
+					deinit(event)
 				})
 
+				canvasCtx.fillStyle = 'rgb(0, 0, 0)'
+				canvasCtx.fillRect(0, 0, WIDTH, HEIGHT)
+				
 				function draw() {
 				  drawVisual = requestAnimationFrame(draw)
 
 				  analyser.getByteFrequencyData(dataArray)
 
-				  canvasCtx.fillStyle = 'rgb(0, 0, 0)'
+				  canvasCtx.fillStyle = 'rgba(0, 0, 0, ' + fadeconstant + ')'
 				  canvasCtx.fillRect(0, 0, WIDTH, HEIGHT)
+
+				  canvas
 
 				  var barWidth = ((WIDTH / bufferLength) - spacing)
 				  var barHeight
 				  var x = 0
 
 				  for(var i = 0; i < bufferLength; i++) {
-					barHeight = dataArray[i]
-					
-					canvasCtx.fillStyle = 'rgb(0,' + barHeight + ',' + barHeight*2 + ')'
-					canvasCtx.fillRect(x,HEIGHT-barHeight*4,barWidth,barHeight*4)
+					barHeight = (dataArray[i]/255)*HEIGHT
+					canvasCtx.fillStyle = 'rgb(0,' + dataArray[i] + ',' + dataArray[i]*2 + ')'
+					canvasCtx.fillRect(x,HEIGHT-barHeight,barWidth,barHeight)
 
 					x += barWidth + spacing
 				  }
