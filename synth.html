@@ -80,7 +80,7 @@
 				modebutton.innerHTML = modes[currentmode]
 				var frequencyLabel = document.getElementById("frequencylabel")
 				frequencyLabel.innerHTML = "0 Hz"
-				
+
 				canvas.width = WIDTH
 				canvas.height = HEIGHT
 				var spacing = 0
@@ -138,6 +138,7 @@
 
 				function init(event){
 					if(event.buttons == 1 || event.touches){
+						audioCtx.resume()
 						oscillatorToggle.gain.value = 1
 						if(modes[currentmode] == "Pan * Frequency"){
 							freq = ((1 - event.clientY/canvas.clientHeight) * range) + offset
@@ -177,7 +178,6 @@
 				canvas.addEventListener("touchmove", (event) => {
 					event.clientX = event.touches[0].clientX
 					event.clientY = event.touches[0].clientY
-					console.log(event)
 					move(event)
 				})
 				canvas.addEventListener("mousedown", (event) => {
@@ -186,7 +186,6 @@
 				canvas.addEventListener("touchstart", (event) => {
 					event.clientX = event.touches[0].clientX
 					event.clientY = event.touches[0].clientY
-					console.log(event)
 					init(event)
 				})
 				canvas.addEventListener("mouseenter", (event) => {
