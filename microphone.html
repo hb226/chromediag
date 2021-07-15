@@ -31,7 +31,9 @@
 				canvas.width = WIDTH
 				canvas.height = HEIGHT
 				var spacing = 4
-				
+				var bars = 64
+				var fadeconstant = 0.1
+				var timeconstant = 0.85
 				var p = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true,  autoGainControl: false } })
 				var audioCtx = new AudioContext()
 				var audioSource = audioCtx.createMediaStreamSource(p)
@@ -40,31 +42,35 @@
 
 				audioSource.connect(analyser)
 
-				analyser.fftSize = 128
-				analyser.smoothingTimeConstant = 0.92
+				analyser.fftSize = bars*2
+				analyser.smoothingTimeConstant = timeconstant
 				var bufferLength = analyser.frequencyBinCount
 				console.log(bufferLength)
 				var dataArray = new Uint8Array(bufferLength)
 
 				canvasCtx.clearRect(0, 0, WIDTH, HEIGHT)
 
+				canvasCtx.fillStyle = 'rgb(0, 0, 0)'
+				canvasCtx.fillRect(0, 0, WIDTH, HEIGHT)
+				
 				function draw() {
 				  drawVisual = requestAnimationFrame(draw)
 
 				  analyser.getByteFrequencyData(dataArray)
 
-				  canvasCtx.fillStyle = 'rgb(0, 0, 0)'
+				  canvasCtx.fillStyle = 'rgba(0, 0, 0, ' + fadeconstant + ')'
 				  canvasCtx.fillRect(0, 0, WIDTH, HEIGHT)
+
+				  canvas
 
 				  var barWidth = ((WIDTH / bufferLength) - spacing)
 				  var barHeight
 				  var x = 0
 
 				  for(var i = 0; i < bufferLength; i++) {
-					barHeight = dataArray[i]
-					
-					canvasCtx.fillStyle = 'rgb(0,' + barHeight + ',' + barHeight*2 + ')'
-					canvasCtx.fillRect(x,HEIGHT-barHeight*3,barWidth,barHeight*3)
+					barHeight = (dataArray[i]/255)*HEIGHT
+					canvasCtx.fillStyle = 'rgb(0,' + dataArray[i] + ',' + dataArray[i]*2 + ')'
+					canvasCtx.fillRect(x,HEIGHT-barHeight,barWidth,barHeight)
 
 					x += barWidth + spacing
 				  }
