@@ -93,8 +93,8 @@
 			let dropdowncontent = document.getElementById("dropdown-content")
 
 			let pagecontainer = document.getElementById("pagecontainer")
+			var currentpage = 0
 			
-			let currentpage = 0
 			let pages = [
 				["touchscreen.html", "Touch Screen"],
 				["webcam.html", "Webcam"],
@@ -104,6 +104,10 @@
 			]
 			
 			function updateView(){
+				location.hash = String(pages[currentpage][0]).replace(".html","")
+				
+				checkHash()
+
 				droplabel.innerHTML = pages[currentpage][1]
 				pagecontainer.setAttribute("src", pages[currentpage][0])
 				
@@ -123,7 +127,14 @@
 				})
 				pagecontainer.contentWindow.focus()
 			}
-			
+			function checkHash(){
+				for(var i = 0; i < pages.length; i++){
+					if(String(location.hash + ".html").toLowerCase().replace("#","") == String(pages[i][0]).toLowerCase()){
+						currentpage = i
+						break
+					}
+				}
+			}
 			prevbutton.addEventListener("click", (event) => {
 				if(currentpage-1 < 0){
 					currentpage = pages.length-1
@@ -143,6 +154,10 @@
 			dropbutton.addEventListener("click", (event) => {
 				dropdowncontent.classList.toggle("show")
 			})
+			window.addEventListener("hashchange", (event) => {
+				checkHash()
+				updateView()
+			})
 			window.onclick = function(event){
 				if(!event.target.matches('.dropdown-content') && !event.target.matches('#droplabel')) {
 					if (dropdowncontent.classList.contains('show')) {
@@ -150,6 +165,7 @@
 					}
 				}
 			}
+			checkHash()
 			updateView()
 
 
